@@ -296,9 +296,10 @@ document.addEventListener('DOMContentLoaded', () => {
         renderBoard();
     }
 
-    // Обработка долгого нажатия для мобильных устройств
+    // Обработка долгого нажатия и двойного клика для мобильных устройств
     let touchTimer;
     let touchStartTime;
+    let lastTap = 0;
     
     function handleTouchStart(event) {
         if (!gameActive) return;
@@ -312,6 +313,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (revealed[row][col]) return;
         
         touchStartTime = Date.now();
+        
+        // Проверяем на двойное нажатие
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 300 && tapLength > 0) {
+            // Двойное нажатие - устанавливаем флажок
+            event.preventDefault();
+            flagged[row][col] = !flagged[row][col];
+            renderBoard();
+            
+            // Вибрация для обратной связи (если поддерживается)
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+            
+            // Сбрасываем таймер долгого нажатия
+            if (touchTimer) {
+                clearTimeout(touchTimer);
+                touchTimer = null;
+            }
+        }
+        
+        lastTap = currentTime;
         
         // Устанавливаем таймер для долгого нажатия
         touchTimer = setTimeout(() => {
