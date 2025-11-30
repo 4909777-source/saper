@@ -51,8 +51,10 @@
         
         <main>
             <div class="game-controls">
-                <button id="new-game">🔄 Новая игра</button>
-                <button id="flag-mode" class="flag-mode-btn">🚩 Флаг</button>
+                <div class="control-row">
+                    <button id="new-game">🔄 Новая игра</button>
+                    <button id="flag-mode" class="flag-mode-btn">🚩 Флаг</button>
+                </div>
                 <div class="difficulty">
                     <label for="board-size">Размер поля:</label>
                     <select id="board-size">
@@ -71,39 +73,10 @@
                     <select id="game-mode-select">
                         <option value="single">Один игрок</option>
                         <option value="multi">Два игрока</option>
-                        <option value="network">Сетевая игра</option>
                     </select>
                 </div>
             </div>
             
-            <div id="network-controls" class="network-controls hidden">
-                <div class="network-tabs">
-                    <button id="create-game-tab" class="network-tab active">Создать игру</button>
-                    <button id="join-game-tab" class="network-tab">Присоединиться</button>
-                </div>
-                
-                <div id="create-game-panel" class="network-panel">
-                    <div class="room-info">
-                        <label>Номер комнаты:</label>
-                        <div class="room-number" id="room-number">-</div>
-                        <button id="copy-room-btn">📋 Копировать</button>
-                    </div>
-                    <div class="network-status">
-                        <span id="network-status">Ожидание второго игрока...</span>
-                    </div>
-                </div>
-                
-                <div id="join-game-panel" class="network-panel hidden">
-                    <div class="room-info">
-                        <label for="join-room-input">Введите номер комнаты:</label>
-                        <input type="text" id="join-room-input" placeholder="123456" maxlength="6">
-                        <button id="join-room-btn">🔗 Присоединиться</button>
-                    </div>
-                    <div class="network-status">
-                        <span id="join-status">Введите номер комнаты для подключения</span>
-                    </div>
-                </div>
-            </div>
             
             <div id="game-board" class="game-board"></div>
             
