@@ -514,6 +514,12 @@ input[type="number"]:focus {
     transform: translate(-50%, -50%);
 }
 
+.cell.mine.exploded::after {
+    animation: bomb-explode 1s ease-out;
+    width: 120px;
+    height: 120px;
+}
+
 .cell.flagged {
     background: linear-gradient(145deg, #ffcc00, #ffb700);
     box-shadow: 0 3px 10px rgba(255, 204, 0, 0.3);
@@ -534,6 +540,21 @@ input[type="number"]:focus {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }
     100% { transform: scale(1); }
+}
+
+@keyframes bomb-explode {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0.3;
+    }
 }
 
 .cell[data-count="1"] { color: #0000ff; }
@@ -722,13 +743,13 @@ input[type="number"]:focus {
     }
     
     .cell.flagged::after {
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
     }
     
     .cell.mine::after {
-        width: 25px;
-        height: 25px;
+        width: 30px;
+        height: 30px;
     }
     
     .game-message {
