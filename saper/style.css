@@ -933,6 +933,58 @@ body.dark-theme .network-status {
     }
 }
 
+/* Стили для сетевых кнопок */
+.network-buttons {
+    display: none;
+    gap: 10px;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+.network-action-btn {
+    padding: 10px 20px;
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+    flex: 1;
+}
+
+.network-action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+}
+
+#create-room-btn {
+    background: linear-gradient(45deg, #2ecc71, #27ae60);
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+}
+
+#join-room-btn {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+
+body.dark-theme .network-action-btn {
+    background: linear-gradient(45deg, #2a2a3e, #1a1a2e);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dark-theme #create-room-btn {
+    background: linear-gradient(45deg, #27ae60, #229954);
+    border: 1px solid rgba(46, 204, 113, 0.2);
+}
+
+body.dark-theme #join-room-btn {
+    background: linear-gradient(45deg, #c0392b, #a02620);
+    border: 1px solid rgba(231, 76, 60, 0.2);
+}
+
 @media (max-width: 480px) {
     .container {
         padding: 5px;
