@@ -14,6 +14,92 @@ body {
     align-items: center;
     padding: 10px;
     box-sizing: border-box;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Темная тема */
+body.dark-theme {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #f0f0f0;
+}
+
+body.dark-theme .container {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dark-theme .game-info,
+body.dark-theme .roblox-score-container,
+body.dark-theme .player-score,
+body.dark-theme .difficulty,
+body.dark-theme .game-mode,
+body.dark-theme .game-board,
+body.dark-theme .instructions {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dark-theme .cell {
+    background: linear-gradient(145deg, #3a3a3a, #4a4a4a);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f0f0f0;
+}
+
+body.dark-theme .cell.revealed {
+    background: linear-gradient(145deg, #2a2a2a, #3a3a3a);
+}
+
+body.dark-theme .cell:hover:not(.revealed):not(.flagged) {
+    background: linear-gradient(145deg, #4a4a4a, #5a5a5a);
+}
+
+body.dark-theme .game-message.win {
+    background: linear-gradient(45deg, #1e8449, #2d7a32);
+}
+
+body.dark-theme .game-message.lose {
+    background: linear-gradient(45deg, #8b2c1c, #a53929);
+}
+
+body.dark-theme .score-summary {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .score-summary div {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Кнопка переключения темы */
+.theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.theme-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #f0f0f0, #ffffff);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .theme-btn {
+    background: linear-gradient(145deg, #2a2a2a, #3a3a3a);
+    border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .container {
