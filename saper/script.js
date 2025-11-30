@@ -424,6 +424,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         renderBoard();
         
+        // Добавляем анимацию взрыва для мины, на которую попали
+        if (!isWin) {
+            setTimeout(() => {
+                const mineCells = document.querySelectorAll('.cell.mine');
+                mineCells.forEach(cell => {
+                    if (cell.classList.contains('revealed')) {
+                        cell.classList.add('exploded');
+                    }
+                });
+            }, 100);
+        }
+        
         // Показать сообщение о результате с очками
         gameMessageElement.classList.remove('hidden');
         
