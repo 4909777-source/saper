@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameMessageElement = document.getElementById('game-message');
     const robloxScoreContainer = document.querySelector('.roblox-score-container');
     const themeToggleButton = document.getElementById('theme-toggle');
+    const flagModeButton = document.getElementById('flag-mode');
 
     let board = [];
     let revealed = [];
@@ -34,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let player1TotalTime = 0;
     let player2TotalTime = 0;
     let gameMode = 'multi'; // 'single' или 'multi'
+    let flagMode = false; // Режим установки флагов
 
     // Инициализация темы
     function initTheme() {
@@ -220,7 +222,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const row = parseInt(event.target.dataset.row);
         const col = parseInt(event.target.dataset.col);
         
-        if (revealed[row][col] || flagged[row][col]) return;
+        if (revealed[row][col]) return;
+        
+        // Если в режиме флага, устанавливаем/убираем флаг
+        if (flagMode) {
+            flagged[row][col] = !flagged[row][col];
+            renderBoard();
+            return;
+        }
+        
+        // Если клетка помечена флагом, не открываем её
+        if (flagged[row][col]) return;
         
         // Записываем время начала хода текущего игрока
         if (currentPlayer === 1) {
@@ -590,6 +602,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Обработчик нажатия на кнопку "Новая игра"
     newGameButton.addEventListener('click', initGame);
+    
+    // Обработчик нажатия на кнопку режима флага
+    flagModeButton.addEventListener('click', () => {
+        flagMode = !flagMode;
+        flagModeButton.classList.toggle('active');
+        
+        // Вибрация для обратной связи (если поддерживается)
+        if (navigator.vibrate) {
+            navigator.vibrate(50);
+        }
+    });
     
     // Запуск игры при загрузке страницы
     initGame();
