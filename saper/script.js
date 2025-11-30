@@ -17,17 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const robloxScoreContainer = document.querySelector('.roblox-score-container');
     const themeToggleButton = document.getElementById('theme-toggle');
     const flagModeButton = document.getElementById('flag-mode');
-    const networkControls = document.getElementById('network-controls');
-    const createGameTab = document.getElementById('create-game-tab');
-    const joinGameTab = document.getElementById('join-game-tab');
-    const createGamePanel = document.getElementById('create-game-panel');
-    const joinGamePanel = document.getElementById('join-game-panel');
-    const roomNumberElement = document.getElementById('room-number');
-    const copyRoomBtn = document.getElementById('copy-room-btn');
-    const joinRoomInput = document.getElementById('join-room-input');
-    const joinRoomBtn = document.getElementById('join-room-btn');
-    const networkStatusElement = document.getElementById('network-status');
-    const joinStatusElement = document.getElementById('join-status');
 
     let board = [];
     let revealed = [];
@@ -45,12 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let player2StartTime = 0;
     let player1TotalTime = 0;
     let player2TotalTime = 0;
-    let gameMode = 'multi'; // 'single', 'multi' или 'network'
+    let gameMode = 'multi'; // 'single' или 'multi'
     let flagMode = false; // Режим установки флагов
-    let isHost = false; // Является ли текущий игрок создателем комнаты
-    let roomCode = ''; // Код комнаты для сетевой игры
-    let isMyTurn = true; // Чей сейчас ход в сетевом режиме
-    let ws = null; // WebSocket соединение
 
     // Инициализация темы
     function initTheme() {
@@ -63,169 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Генерация уникального кода комнаты
-    function generateRoomCode() {
-        return Math.floor(100000 + Math.random() * 900000).toString();
-    }
-
-    // Копирование кода комнаты в буфер обмена
-    function copyRoomCode() {
-        if (!roomCode) return;
-        
-        navigator.clipboard.writeText(roomCode).then(() => {
-            const originalText = copyRoomBtn.textContent;
-            copyRoomBtn.textContent = '✅ Скопировано!';
-            setTimeout(() => {
-                copyRoomBtn.textContent = originalText;
-            }, 2000);
-        }).catch(err => {
-            console.error('Ошибка копирования:', err);
-        });
-    }
-
-    // Создание сетевой игры
-    function createNetworkGame() {
-        roomCode = generateRoomCode();
-        isHost = true;
-        isMyTurn = true;
-        roomNumberElement.textContent = roomCode;
-        
-        // Показываем панель создания игры
-        networkControls.classList.remove('hidden');
-        createGamePanel.classList.remove('hidden');
-        joinGamePanel.classList.add('hidden');
-        
-        // Инициализируем игру
-        initGame();
-        
-        // Обновляем статус
-        networkStatusElement.textContent = 'Ожидание второго игрока...';
-        
-        // Здесь будет подключение к WebSocket серверу
-        connectToServer();
-    }
-
-    // Присоединение к сетевой игре
-    function joinNetworkGame() {
-        const inputCode = joinRoomInput.value.trim();
-        if (inputCode.length !== 6) {
-            joinStatusElement.textContent = '❌ Неверный формат кода комнаты';
-            return;
-        }
-        
-        roomCode = inputCode;
-        isHost = false;
-        isMyTurn = false;
-        
-        // Показываем панель присоединения
-        networkControls.classList.remove('hidden');
-        createGamePanel.classList.add('hidden');
-        joinGamePanel.classList.remove('hidden');
-        
-        // Обновляем статус
-        joinStatusElement.textContent = '🔗 Подключение к игре...';
-        
-        // Здесь будет подключение к WebSocket серверу
-        connectToServer();
-    }
-
-    // Подключение к серверу (заглушка для демонстрации)
-    function connectToServer() {
-        // В реальном приложении здесь будет WebSocket подключение
-        // Для демонстрации используем localStorage для симуляции
-        if (isHost) {
-            localStorage.setItem(`room_${roomCode}`, JSON.stringify({
-                board: board,
-                revealed: revealed,
-                flagged: flagged,
-                mines: mines,
-                currentPlayer: 1,
-                gameActive: true,
-                player1Moves: 0,
-                player2Moves: 0,
-                player1Score: 0,
-                player2Score: 0,
-                seconds: 0,
-                player1StartTime: 0,
-                player2StartTime: 0,
-                player1TotalTime: 0,
-                player2TotalTime: 0
-            }));
-            
-            // Симуляция подключения второго игрока через 3 секунды
-            setTimeout(() => {
-                networkStatusElement.textContent = '✅ Второй игрок подключен! Игра началась.';
-                gameActive = true;
-                startTimer();
-            }, 3000);
-        } else {
-            // Проверяем, существует ли комната
-            const roomData = localStorage.getItem(`room_${roomCode}`);
-            if (roomData) {
-                const data = JSON.parse(roomData);
-                board = data.board;
-                revealed = data.revealed;
-                flagged = data.flagged;
-                mines = data.mines;
-                currentPlayer = data.currentPlayer;
-                gameActive = data.gameActive;
-                player1Moves = data.player1Moves;
-                player2Moves = data.player2Moves;
-                player1Score = data.player1Score;
-                player2Score = data.player2Score;
-                seconds = data.seconds;
-                player1StartTime = data.player1StartTime;
-                player2StartTime = data.player2StartTime;
-                player1TotalTime = data.player1TotalTime;
-                player2TotalTime = data.player2TotalTime;
-                
-                joinStatusElement.textContent = '✅ Подключено к игре! Ожидайте хода...';
-                updateUI();
-                updateActivePlayerHighlight();
-                renderBoard();
-                startTimer();
-            } else {
-                joinStatusElement.textContent = '❌ Комната не найдена';
-            }
-        }
-    }
-
-    // Отправка хода на сервер (заглушка)
-    function sendMoveToServer(row, col) {
-        if (!isMyTurn) return;
-        
-        // В реальном приложении здесь будет отправка данных через WebSocket
-        if (isHost) {
-            // Создатель игры обновляет данные в localStorage
-            const roomData = JSON.parse(localStorage.getItem(`room_${roomCode}`));
-            roomData.board = board;
-            roomData.revealed = revealed;
-            roomData.flagged = flagged;
-            roomData.currentPlayer = currentPlayer;
-            roomData.player1Moves = player1Moves;
-            roomData.player2Moves = player2Moves;
-            roomData.player1Score = player1Score;
-            roomData.player2Score = player2Score;
-            roomData.seconds = seconds;
-            roomData.player1StartTime = player1StartTime;
-            roomData.player2StartTime = player2StartTime;
-            roomData.player1TotalTime = player1TotalTime;
-            roomData.player2TotalTime = player2TotalTime;
-            localStorage.setItem(`room_${roomCode}`, JSON.stringify(roomData));
-        }
-        
-        // Переключаем ход
-        isMyTurn = false;
-        updateUI();
-        updateActivePlayerHighlight();
-        
-        // Симуляция хода другого игрока
-        setTimeout(() => {
-            isMyTurn = true;
-            updateUI();
-            updateActivePlayerHighlight();
-        }, 2000);
-    }
 
     // Инициализация игры
     function initGame() {
@@ -243,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Сброс состояния игры
         board = [];
         revealed = [];
+        flagged = [];
         mines = [];
         currentPlayer = 1;
         player1Moves = 0;
@@ -259,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Скрыть сообщение о результате
         gameMessageElement.classList.add('hidden');
         gameMessageElement.classList.remove('win', 'lose');
+        
         
         // Обновить UI в зависимости от режима игры
         updateUI();
@@ -290,25 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Отрисовать поле
         renderBoard();
-        
-        // Инициализация темы после создания поля
-        if (themeToggleButton) {
-            initTheme();
-            
-            // Обработчик переключения темы
-            themeToggleButton.addEventListener('click', () => {
-                document.body.classList.toggle('dark-theme');
-                const isDark = document.body.classList.contains('dark-theme');
-                
-                if (isDark) {
-                    themeToggleButton.textContent = '☀️';
-                    localStorage.setItem('saper-theme', 'dark');
-                } else {
-                    themeToggleButton.textContent = '🌙';
-                    localStorage.setItem('saper-theme', 'light');
-                }
-            });
-        }
     }
 
     // Размещение мин на поле
@@ -403,10 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (revealed[row][col]) return;
         
-        // В сетевом режиме проверяем, наш ли ход
-        if (gameMode === 'network' && !isMyTurn) {
-            return; // Не даем ход, если не наш ход
-        }
         
         // Если в режиме флага, устанавливаем/убираем флаг
         if (flagMode) {
@@ -456,14 +257,9 @@ document.addEventListener('DOMContentLoaded', () => {
             player2StartTime = 0;
         }
         
-        // В сетевом режиме отправляем ход на сервер
-        if (gameMode === 'network') {
-            sendMoveToServer(row, col);
-        } else {
-            // Сменить игрока (только в режиме двух игроков)
-            if (gameMode === 'multi') {
-                currentPlayer = currentPlayer === 1 ? 2 : 1;
-            }
+        // Сменить игрока (только в режиме двух игроков)
+        if (gameMode === 'multi') {
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
         }
         
         // Обновить UI
@@ -758,12 +554,14 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.vs-indicator').style.display = 'none';
             currentPlayerElement.parentElement.style.display = 'none';
             player2MovesElement.parentElement.style.display = 'none';
+            robloxScoreContainer.style.justifyContent = 'center';
         } else {
-            // Показываем все элементы для двух игроков
+            // В режиме двух игроков показываем все элементы
             player2ScoreContainer.style.display = 'flex';
             document.querySelector('.vs-indicator').style.display = 'flex';
             currentPlayerElement.parentElement.style.display = 'block';
             player2MovesElement.parentElement.style.display = 'block';
+            robloxScoreContainer.style.justifyContent = 'space-between';
         }
     }
 
@@ -781,21 +579,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // В одиночном режиме подсвечиваем только первого игрока
             player1ScoreContainer.classList.add('active');
             player2ScoreContainer.classList.remove('active');
-        } else if (gameMode === 'network') {
-            // В сетевом режиме подсвечиваем на основе хода
-            if (isMyTurn) {
-                if (currentPlayer === 1) {
-                    player1ScoreContainer.classList.add('active');
-                    player2ScoreContainer.classList.remove('active');
-                } else {
-                    player2ScoreContainer.classList.add('active');
-                    player1ScoreContainer.classList.remove('active');
-                }
-            } else {
-                // Если не наш ход, подсвечиваем ожидание
-                player1ScoreContainer.classList.remove('active');
-                player2ScoreContainer.classList.remove('active');
-            }
         } else {
             // В режиме двух игроков подсвечиваем текущего игрока
             if (currentPlayer === 1) {
@@ -822,33 +605,13 @@ document.addEventListener('DOMContentLoaded', () => {
         timerInterval = setInterval(updateTimer, 1000);
     }
 
-    // Обработчики для сетевого режима
-    createGameTab.addEventListener('click', () => {
-        createGameTab.classList.add('active');
-        joinGameTab.classList.remove('active');
-        createGamePanel.classList.remove('hidden');
-        joinGamePanel.classList.add('hidden');
-    });
-    
-    joinGameTab.addEventListener('click', () => {
-        joinGameTab.classList.add('active');
-        createGameTab.classList.remove('active');
-        joinGamePanel.classList.remove('hidden');
-        createGamePanel.classList.add('hidden');
-    });
-    
-    copyRoomBtn.addEventListener('click', copyRoomCode);
-    
-    joinRoomBtn.addEventListener('click', joinNetworkGame);
-    
-    joinRoomInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            joinNetworkGame();
-        }
-    });
     
     // Обработчик нажатия на кнопку "Новая игра"
-    newGameButton.addEventListener('click', initGame);
+    newGameButton.addEventListener('click', () => {
+        // Сбрасываем режим игры на тот, что выбран в селекторе
+        gameMode = gameModeSelect.value;
+        initGame();
+    });
     
     // Обработчик нажатия на кнопку режима флага
     flagModeButton.addEventListener('click', () => {
@@ -863,10 +626,24 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Обработчик изменения режима игры
     gameModeSelect.addEventListener('change', () => {
-        if (gameModeSelect.value === 'network') {
-            createNetworkGame();
+        gameMode = gameModeSelect.value;
+        initGame();
+    });
+    
+    // Инициализация темы
+    initTheme();
+    
+    // Обработчик переключения темы
+    themeToggleButton.addEventListener('click', () => {
+        document.body.classList.toggle('dark-theme');
+        const isDark = document.body.classList.contains('dark-theme');
+        
+        if (isDark) {
+            themeToggleButton.textContent = '☀️';
+            localStorage.setItem('saper-theme', 'dark');
         } else {
-            initGame();
+            themeToggleButton.textContent = '🌙';
+            localStorage.setItem('saper-theme', 'light');
         }
     });
     
