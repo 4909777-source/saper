@@ -669,6 +669,7 @@ input[type="number"]:focus {
         padding: 8px;
         margin: 0 auto;
         max-width: 100%;
+        width: calc(100% - 20px); /* Добавляем небольшие отступы по бокам */
     }
     
     .cell {
@@ -702,13 +703,13 @@ input[type="number"]:focus {
     }
     
     .cell.flagged::after {
-        width: 20px;
-        height: 20px;
+        width: 25px;
+        height: 25px;
     }
     
     .cell.mine::after {
-        width: 18px;
-        height: 18px;
+        width: 22px;
+        height: 22px;
     }
     
     .game-message {
@@ -729,7 +730,12 @@ input[type="number"]:focus {
 
 @media (max-width: 480px) {
     .container {
-        padding: 10px;
+        padding: 5px;
+    }
+    
+    .game-board {
+        width: calc(100% - 10px); /* Еще меньше отступы для очень маленьких экранов */
+        padding: 5px;
     }
     
     h1 {
@@ -772,8 +778,8 @@ input[type="number"]:focus {
     }
     
     .player-avatar::after {
-        width: 25px;
-        height: 25px;
+        width: 30px;
+        height: 30px;
     }
     
     .vs-indicator {
