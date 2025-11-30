@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newGameButton = document.getElementById('new-game');
     const gameMessageElement = document.getElementById('game-message');
     const robloxScoreContainer = document.querySelector('.roblox-score-container');
+    const themeToggleButton = document.getElementById('theme-toggle');
 
     let board = [];
     let revealed = [];
@@ -33,6 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let player1TotalTime = 0;
     let player2TotalTime = 0;
     let gameMode = 'multi'; // 'single' или 'multi'
+
+    // Инициализация темы
+    function initTheme() {
+        const savedTheme = localStorage.getItem('saper-theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-theme');
+            themeToggleButton.textContent = '☀️';
+        } else {
+            themeToggleButton.textContent = '🌙';
+        }
+    }
 
     // Инициализация игры
     function initGame() {
@@ -97,6 +109,25 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Отрисовать поле
         renderBoard();
+        
+        // Инициализация темы после создания поля
+        if (themeToggleButton) {
+            initTheme();
+            
+            // Обработчик переключения темы
+            themeToggleButton.addEventListener('click', () => {
+                document.body.classList.toggle('dark-theme');
+                const isDark = document.body.classList.contains('dark-theme');
+                
+                if (isDark) {
+                    themeToggleButton.textContent = '☀️';
+                    localStorage.setItem('saper-theme', 'dark');
+                } else {
+                    themeToggleButton.textContent = '🌙';
+                    localStorage.setItem('saper-theme', 'light');
+                }
+            });
+        }
     }
 
     // Размещение мин на поле
@@ -171,6 +202,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 cell.addEventListener('click', handleCellClick);
                 cell.addEventListener('contextmenu', handleRightClick);
+                
+                // Добавляем поддержку долгого нажатия для мобильных устройств
+                cell.addEventListener('touchstart', handleTouchStart, { passive: false });
+                cell.addEventListener('touchend', handleTouchEnd, { passive: false });
+                cell.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+                
                 gameBoard.appendChild(cell);
             }
         }
@@ -257,6 +294,44 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Перерисовать поле
         renderBoard();
+    }
+
+    // Обработка долгого нажатия для мобильных устройств
+    let touchTimer;
+    let touchStartTime;
+    
+    function handleTouchStart(event) {
+        if (!gameActive) return;
+        
+        const cell = event.target.closest('.cell');
+        if (!cell) return;
+        
+        const row = parseInt(cell.dataset.row);
+        const col = parseInt(cell.dataset.col);
+        
+        if (revealed[row][col]) return;
+        
+        touchStartTime = Date.now();
+        
+        // Устанавливаем таймер для долгого нажатия
+        touchTimer = setTimeout(() => {
+            // Долгое нажатие - устанавливаем флажок
+            flagged[row][col] = !flagged[row][col];
+            renderBoard();
+            
+            // Вибрация для обратной связи (если поддерживается)
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }, 500); // 500мс для долгого нажатия
+    }
+    
+    function handleTouchEnd(event) {
+        // Очищаем таймер если нажатие было коротким
+        if (touchTimer) {
+            clearTimeout(touchTimer);
+            touchTimer = null;
+        }
     }
 
     // Открытие клетки
