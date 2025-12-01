@@ -46,7 +46,8 @@ body.dark-theme .cell {
 }
 
 body.dark-theme .cell.revealed {
-    background: linear-gradient(145deg, #2a2a2a, #3a3a3a);
+    background: linear-gradient(145deg, #4a4a4a, #5a5a5a);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 body.dark-theme .cell:hover:not(.revealed):not(.flagged) {
@@ -75,6 +76,8 @@ body.dark-theme .score-summary div {
     top: 20px;
     right: 20px;
     z-index: 1000;
+    display: flex;
+    gap: 10px;
 }
 
 .theme-btn {
@@ -100,6 +103,10 @@ body.dark-theme .score-summary div {
 body.dark-theme .theme-btn {
     background: linear-gradient(145deg, #2a2a2a, #3a3a3a);
     border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+#sound-toggle.muted {
+    opacity: 0.5;
 }
 
 .container {
@@ -531,8 +538,8 @@ input[type="number"]:focus {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     display: block;
 }
 
@@ -743,8 +750,8 @@ input[type="number"]:focus {
     }
     
     .cell.flagged::after {
-        width: 32px;
-        height: 32px;
+        width: 40px;
+        height: 40px;
     }
     
     .cell.mine::after {
