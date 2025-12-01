@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const robloxScoreContainer = document.querySelector('.roblox-score-container');
     const themeToggleButton = document.getElementById('theme-toggle');
     const flagModeButton = document.getElementById('flag-mode');
+    const soundToggleButton = document.getElementById('sound-toggle');
 
     let board = [];
     let revealed = [];
@@ -36,6 +37,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let player2TotalTime = 0;
     let gameMode = 'multi'; // 'single' или 'multi'
     let flagMode = false; // Режим установки флагов
+    let soundEnabled = true; // Флаг включения звука
+    
+    // Звуковые эффекты
+    const openCellSound = new Audio('snow-golem-death1.mp3');
+    const explosionSound = new Audio('suction-10.mp3');
+    const flagSound = new Audio('flag.mp3');
+    const winnerSound = new Audio('winner.mp3');
+    
+    // Устанавливаем громкость звуков
+    openCellSound.volume = 0.3;
+    explosionSound.volume = 0.5;
+    flagSound.volume = 0.4;
+    winnerSound.volume = 0.6;
 
     // Инициализация темы
     function initTheme() {
@@ -45,6 +59,52 @@ document.addEventListener('DOMContentLoaded', () => {
             themeToggleButton.textContent = '☀️';
         } else {
             themeToggleButton.textContent = '🌙';
+        }
+    }
+    
+    // Инициализация звука
+    function initSound() {
+        const savedSound = localStorage.getItem('saper-sound');
+        if (savedSound === 'false') {
+            soundEnabled = false;
+            soundToggleButton.textContent = '🔇';
+            soundToggleButton.classList.add('muted');
+        } else {
+            soundEnabled = true;
+            soundToggleButton.textContent = '🔊';
+            soundToggleButton.classList.remove('muted');
+        }
+    }
+    
+    // Функция воспроизведения звука открытия клетки
+    function playOpenCellSound() {
+        if (soundEnabled) {
+            openCellSound.currentTime = 0; // Сбрасываем время для повторного воспроизведения
+            openCellSound.play().catch(e => console.log('Ошибка воспроизведения звука:', e));
+        }
+    }
+    
+    // Функция воспроизведения звука взрыва
+    function playExplosionSound() {
+        if (soundEnabled) {
+            explosionSound.currentTime = 0; // Сбрасываем время для повторного воспроизведения
+            explosionSound.play().catch(e => console.log('Ошибка воспроизведения звука:', e));
+        }
+    }
+    
+    // Функция воспроизведения звука установки флага
+    function playFlagSound() {
+        if (soundEnabled) {
+            flagSound.currentTime = 0; // Сбрасываем время для повторного воспроизведения
+            flagSound.play().catch(e => console.log('Ошибка воспроизведения звука:', e));
+        }
+    }
+    
+    // Функция воспроизведения звука победы
+    function playWinnerSound() {
+        if (soundEnabled) {
+            winnerSound.currentTime = 0; // Сбрасываем время для повторного воспроизведения
+            winnerSound.play().catch(e => console.log('Ошибка воспроизведения звука:', e));
         }
     }
 
@@ -212,6 +272,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Если в режиме флага, устанавливаем/убираем флаг
         if (flagMode) {
             flagged[row][col] = !flagged[row][col];
+            // Воспроизводим звук установки флага
+            playFlagSound();
             renderBoard();
             return;
         }
@@ -234,6 +296,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Проверить, попал ли игрок на мину
         if (board[row][col] === -1) {
+            // Воспроизводим звук взрыва
+            playExplosionSound();
             // Обновляем общее время игры перед завершением
             updatePlayerTimes();
             calculateScores();
@@ -289,6 +353,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Переключить состояние флажка
         flagged[row][col] = !flagged[row][col];
         
+        // Воспроизводим звук установки флага
+        playFlagSound();
+        
         // Перерисовать поле
         renderBoard();
     }
@@ -318,6 +385,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Двойное нажатие - устанавливаем флажок
             event.preventDefault();
             flagged[row][col] = !flagged[row][col];
+            // Воспроизводим звук установки флага
+            playFlagSound();
             renderBoard();
             
             // Вибрация для обратной связи (если поддерживается)
@@ -338,6 +407,8 @@ document.addEventListener('DOMContentLoaded', () => {
         touchTimer = setTimeout(() => {
             // Долгое нажатие - устанавливаем флажок
             flagged[row][col] = !flagged[row][col];
+            // Воспроизводим звук установки флага
+            playFlagSound();
             renderBoard();
             
             // Вибрация для обратной связи (если поддерживается)
@@ -362,6 +433,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         revealed[row][col] = true;
+        
+        // Воспроизводим звук открытия клетки
+        playOpenCellSound();
         
         // Если клетка пустая (0 мин вокруг), открыть все соседние клетки
         if (board[row][col] === 0) {
@@ -425,6 +499,9 @@ document.addEventListener('DOMContentLoaded', () => {
         gameMessageElement.classList.remove('hidden');
         
         if (isWin) {
+            // Воспроизводим звук победы
+            playWinnerSound();
+            
             if (gameMode === 'single') {
                 gameMessageElement.innerHTML = `
                     <div>🏆 Поздравляем, вы победили! 🏆</div>
@@ -646,6 +723,24 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('saper-theme', 'light');
         }
     });
+    
+    // Обработчик переключения звука
+    soundToggleButton.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        
+        if (soundEnabled) {
+            soundToggleButton.textContent = '🔊';
+            soundToggleButton.classList.remove('muted');
+            localStorage.setItem('saper-sound', 'true');
+        } else {
+            soundToggleButton.textContent = '🔇';
+            soundToggleButton.classList.add('muted');
+            localStorage.setItem('saper-sound', 'false');
+        }
+    });
+    
+    // Инициализация звука при загрузке страницы
+    initSound();
     
     // Запуск игры при загрузке страницы
     initGame();
