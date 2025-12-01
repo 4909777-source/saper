@@ -150,8 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
         updateActivePlayerHighlight();
         updateBoardSize();
         
-        // Остановить таймер
+        // Остановить предыдущий таймер и запустить новый
         clearInterval(timerInterval);
+        seconds = 0; // Сбрасываем секунды при начале новой игры
         timerInterval = setInterval(updateTimer, 1000);
         
         // Создать пустое поле
@@ -682,6 +683,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Запуск таймера
     function startTimer() {
         clearInterval(timerInterval);
+        seconds = 0; // Сбрасываем секунды при запуске таймера
         timerInterval = setInterval(updateTimer, 1000);
     }
 
