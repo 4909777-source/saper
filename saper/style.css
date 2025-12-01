@@ -697,6 +697,12 @@ input[type="number"]:focus {
         margin-bottom: 15px;
     }
     
+    .control-row {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+    }
+    
     .difficulty, .game-mode {
         width: 100%;
         justify-content: space-between;
