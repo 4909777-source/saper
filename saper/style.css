@@ -650,7 +650,7 @@ input[type="number"]:focus {
     
     .game-info {
         flex-direction: column;
-        gap: 10px;
+        gap: 15px;
         padding: 10px;
         margin-bottom: 15px;
     }
@@ -699,6 +699,7 @@ input[type="number"]:focus {
     
     .control-row {
         display: flex;
+        flex-direction: column;
         gap: 10px;
         width: 100%;
     }
@@ -773,6 +774,11 @@ input[type="number"]:focus {
     
     .score-summary {
         font-size: 0.9em;
+        gap: 10px;
+    }
+    
+    .score-summary div {
+        margin: 5px 0;
     }
     
     .instructions {
