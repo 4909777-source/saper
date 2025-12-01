@@ -153,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Остановить предыдущий таймер и запустить новый
         clearInterval(timerInterval);
         seconds = 0; // Сбрасываем секунды при начале новой игры
+        console.log('Starting new timer, seconds reset to 0');
         timerInterval = setInterval(updateTimer, 1000);
         
         // Создать пустое поле
@@ -283,13 +284,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (flagged[row][col]) return;
         
         // Записываем время начала хода текущего игрока
+        console.log('Player move started, current time:', seconds, 'current player:', currentPlayer);
         if (currentPlayer === 1) {
             if (player1StartTime === 0) {
                 player1StartTime = seconds;
+                console.log('Player 1 start time set to:', player1StartTime);
             }
         } else {
             if (player2StartTime === 0) {
                 player2StartTime = seconds;
+                console.log('Player 2 start time set to:', player2StartTime);
             }
         }
         
@@ -677,7 +681,9 @@ document.addEventListener('DOMContentLoaded', () => {
         seconds++;
         const minutes = Math.floor(seconds / 60);
         const secs = seconds % 60;
-        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        const timeString = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        timerElement.textContent = timeString;
+        console.log('Timer updated:', timeString, 'seconds:', seconds); // Отладочный вывод
     }
     
     // Запуск таймера
