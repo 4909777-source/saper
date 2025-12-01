@@ -298,9 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (board[row][col] === -1) {
             // Воспроизводим звук взрыва
             playExplosionSound();
-            // Обновляем общее время игры перед завершением
-            updatePlayerTimes();
-            calculateScores();
             endGame(false);
             return;
         }
@@ -332,9 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Проверить, выиграл ли игрок
         if (checkWin()) {
-            // Обновляем общее время игры перед завершением
-            updatePlayerTimes();
-            calculateScores();
             endGame(true);
         }
     }
@@ -467,6 +461,9 @@ document.addEventListener('DOMContentLoaded', () => {
         gameActive = false;
         clearInterval(timerInterval);
         
+        // Обновляем общее время игры перед завершением
+        updatePlayerTimes();
+        
         // Показать все мины
         for (const mine of mines) {
             revealed[mine.row][mine.col] = true;
@@ -497,6 +494,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Показать сообщение о результате с очками
         gameMessageElement.classList.remove('hidden');
+        
+        // Расчитываем очки перед отображением результатов
+        calculateScores();
         
         if (isWin) {
             // Воспроизводим звук победы
@@ -556,7 +556,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentPlayer === 1 && player1StartTime > 0) {
             player1TotalTime += seconds - player1StartTime;
             player1StartTime = 0;
-        } else if (currentPlayer === 2 && player2StartTime > 0) {
+        }
+        if (currentPlayer === 2 && player2StartTime > 0) {
             player2TotalTime += seconds - player2StartTime;
             player2StartTime = 0;
         }
@@ -584,8 +585,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const difficultyBonus = Math.floor(mineCount * 5);
         
         // Проверяем, проиграл ли игрок на мине
-        const player1LostOnMine = gameActive === false && currentPlayer === 1 && board.some(mine => mine.row >= 0 && mine.col >= 0 && board[mine.row][mine.col] === -1 && revealed[mine.row][mine.col]);
-        const player2LostOnMine = gameActive === false && currentPlayer === 2 && board.some(mine => mine.row >= 0 && mine.col >= 0 && board[mine.row][mine.col] === -1 && revealed[mine.row][mine.col]);
+        // В режиме двух игроков проигравший - тот, кто сделал последний ход
+        // В одиночном режиме проигравший - текущий игрок
+        const player1LostOnMine = !gameActive && currentPlayer === 1;
+        const player2LostOnMine = !gameActive && currentPlayer === 2;
         
         // Расчет очков для игрока 1
         if (player1LostOnMine) {
